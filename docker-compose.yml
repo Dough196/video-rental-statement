@@ -1,0 +1,37 @@
+
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    image: vrs-app
+    container_name: vrs-app
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8082:80"
+    environment:
+      SERVICE_NAME: vrs-app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+
+  db:
+    image: mysql:8
+    container_name: vrs-mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_DATABASE: vrs
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
+    driver: local
