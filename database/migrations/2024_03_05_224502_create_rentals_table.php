@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('movie_id');
             $table->unsignedInteger('days_rented');
+            $table->unsignedDouble('amount', 8, 2)->nullable();
+            $table->unsignedDouble('frequent_points', 8, 2)->nullable();
             $table->foreign('customer_id')->references('id')->on('customers');
             $table->foreign('movie_id')->references('id')->on('movies');
             $table->timestamps();

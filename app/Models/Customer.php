@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Rental;
+use App\Traits\EvaluationTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Customer extends Model
 {
     use HasFactory;
+    use EvaluationTrait;
 
     /**
      * Get all of the rentals for the Customer
@@ -21,6 +23,11 @@ class Customer extends Model
         return $this->hasMany(Rental::class);
     }
 
+    /**
+     * Get rental statement text for the Customer
+     *
+     * @return string
+     */
     public function statement(): string
     {
         $this->loadMissing('rentals.movie.category');
@@ -63,49 +70,6 @@ class Customer extends Model
         $result .= "Amount owed is " . $totalAmount . "\n";
         $result .= "You earned " . $frequentRenterPoints .
             " frequent renter points";
-
-        return $result;
-    }
-
-    protected function evaluateAmountExpression($expression, $variables = [])
-    {
-        // Replace variables in the expression with their values
-        foreach ($variables as $variable => $value) {
-            $expression = str_replace($variable, $value, $expression);
-        }
-
-        // Use eval() to evaluate the expression
-        $result = @eval("return $expression;");
-
-        // Check for errors
-        if ($result === false) {
-            return 0;
-        }
-
-        return $result;
-    }
-
-    protected function evaluateBooleanStatement($statement, $variables = [])
-    {
-        if (empty($statement)) {
-            return true;
-        }
-
-        $data = json_decode($statement, true);
-
-        $expressions = [];
-        foreach ($data['statements'] as $statement) {
-            $field = $statement['field'];
-            $value = $statement['value'];
-            $comparator = $statement['comparator'];
-
-            $expressions[] = "$variables[$field] $comparator $value";
-        }
-
-        $booleanExpression = implode(" && ", $expressions);
-
-        // Evaluate the boolean expression
-        $result = @eval("return ($booleanExpression);");
 
         return $result;
     }
