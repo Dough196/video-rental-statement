@@ -13,6 +13,8 @@ class Movie extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     /**
      * Get all of the rentals for the Movie
      *

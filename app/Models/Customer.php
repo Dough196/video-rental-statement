@@ -13,6 +13,8 @@ class Customer extends Model
     use HasFactory;
     use EvaluationTrait;
 
+    protected $guarded = [];
+
     /**
      * Get all of the rentals for the Customer
      *

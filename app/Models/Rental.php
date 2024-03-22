@@ -14,6 +14,8 @@ class Rental extends Model
     use HasFactory;
     use EvaluationTrait;
 
+    protected $guarded = [];
+
     /**
      * Get the customer that owns the Rental
      *
